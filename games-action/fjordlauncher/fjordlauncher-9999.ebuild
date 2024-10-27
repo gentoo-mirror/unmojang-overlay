@@ -27,9 +27,9 @@ else
 
 	# Fjord Launcher's files are unpacked to ${WORKDIR}/FjordLauncher-${PV}
 	S="${WORKDIR}/${MY_PN}-${PV}"
-
-	KEYWORDS="~amd64 ~arm64"
 fi
+
+KEYWORDS="~amd64 ~arm64"
 
 # GPL-3 for PolyMC, Prism (FjordLauncher is forked from it), and Fjord itself
 # Apache-2.0 for MultiMC (PolyMC is forked from it)
@@ -59,6 +59,7 @@ QT_DEPS="
 		>=dev-qt/qttest-${MIN_QT_5_VERSION}:5
 		>=dev-qt/qtwidgets-${MIN_QT_5_VERSION}:5
 		>=dev-qt/qtxml-${MIN_QT_5_VERSION}:5
+		>=dev-qt/qtnetworkauth-${MIN_QT_5_VERSION}:5
 	)
 
 	qt6? (

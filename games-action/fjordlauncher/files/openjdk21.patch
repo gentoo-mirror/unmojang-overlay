@@ -14,19 +14,6 @@ https://bugs.gentoo.org/917072
 
  set(SRC
      org/prismlauncher/EntryPoint.java
---- a/flatpak/org.prismlauncher.PrismLauncher.yml
-+++ b/flatpak/org.prismlauncher.PrismLauncher.yml
-@@ -40,8 +40,8 @@ modules:
-       - -DLauncher_QT_VERSION_MAJOR=5
-     build-options:
-       env:
--        JAVA_HOME: /usr/lib/sdk/openjdk17/jvm/openjdk-17
--        JAVA_COMPILER: /usr/lib/sdk/openjdk17/jvm/openjdk-17/bin/javac
-+        JAVA_HOME: "$(java-config -O)"
-+        JAVA_COMPILER: "$(java-config -c)"
-     sources:
-       - type: dir
-         path: ../
 --- a/libraries/javacheck/CMakeLists.txt
 +++ b/libraries/javacheck/CMakeLists.txt
 @@ -1,10 +1,10 @@
