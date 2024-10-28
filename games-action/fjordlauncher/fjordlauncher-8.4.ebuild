@@ -27,9 +27,9 @@ else
 
 	# Fjord Launcher's files are unpacked to ${WORKDIR}/FjordLauncher-${PV}
 	S="${WORKDIR}/${MY_PN}-${PV}"
-fi
 
-KEYWORDS="~amd64 ~arm64"
+	KEYWORDS="~amd64 ~arm64"
+fi
 
 # GPL-3 for PolyMC, Prism (FjordLauncher is forked from it), and Fjord itself
 # Apache-2.0 for MultiMC (PolyMC is forked from it)
