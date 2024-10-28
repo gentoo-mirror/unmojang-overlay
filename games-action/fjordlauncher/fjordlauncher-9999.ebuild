@@ -113,14 +113,14 @@ src_prepare() {
 	local java="$(java-config -f)"
 	local java_version=${java//[^0-9]/}
 	if [[ ${java_version} -ge 20 ]]; then
-		elog "Java 20 and up has dropped binary compatibility with java 7."
-		elog "${PN} is being compiled with java ${java_version}."
+		elog "Java 20 and up has dropped binary compatibility with Java 7."
+		elog "Fjord Launcher is being compiled with Java ${java_version}."
 		elog "The sources will be patched to build binary compatible with"
-		elog "java 8 instead of java 7. This may cause issues with very old"
-		elog "Minecraft versions and/or older forge versions."
+		elog "Java 8 instead of Java 7. This may cause issues with very old"
+		elog "Minecraft versions and/or older Forge versions."
 		elog
-		elog "If you experience any problems, install an older java compiler"
-		elog "and select it with \"eselect java\", then recompile ${PN}."
+		elog "If you experience any problems, install an older Java compiler"
+		elog "and select it with \"eselect java-vm\", then recompile."
 		eapply "${FILESDIR}/openjdk21.patch"
 	fi
 
