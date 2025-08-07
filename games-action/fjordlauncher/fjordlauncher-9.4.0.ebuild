@@ -1,14 +1,15 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
+QTMIN=6.0.0
 inherit cmake java-pkg-2 optfeature toolchain-funcs xdg
 
 DESCRIPTION="Prism Launcher fork with support for alternative auth servers"
 HOMEPAGE="https://github.com/unmojang/FjordLauncher"
 
-if [[ ${PV} == 9999 ]]; then
+if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
 
 	EGIT_REPO_URI="
@@ -30,7 +31,7 @@ else
 	# Fjord Launcher's files are unpacked to ${WORKDIR}/FjordLauncher-${PV}
 	S="${WORKDIR}/${MY_PN}-${PV}"
 
-	KEYWORDS="amd64 arm64"
+	KEYWORDS="amd64 ~arm64 ~x86"
 fi
 
 # GPL-3 for PolyMC, Prism (FjordLauncher is forked from it), and Fjord itself
@@ -41,55 +42,26 @@ LICENSE="Apache-2.0 BSD BSD-2 GPL-2+ GPL-3 ISC LGPL-2.1+ LGPL-3+"
 
 SLOT="0"
 
-IUSE="qt6 test"
+IUSE="test"
 
 RESTRICT="!test? ( test )"
 
-MIN_QT_5_VERSION="5.12.0"
-MIN_QT_6_VERSION="6.0.0"
-
-QT_DEPS="
-	!qt6? (
-		>=dev-qt/qtconcurrent-${MIN_QT_5_VERSION}:5
-		>=dev-qt/qtcore-${MIN_QT_5_VERSION}:5
-		>=dev-qt/qtgui-${MIN_QT_5_VERSION}:5
-		>=dev-qt/qtnetwork-${MIN_QT_5_VERSION}:5
-		>=dev-qt/qtnetworkauth-${MIN_QT_5_VERSION}:5
-		>=dev-qt/qttest-${MIN_QT_5_VERSION}:5
-		>=dev-qt/qtwidgets-${MIN_QT_5_VERSION}:5
-		>=dev-qt/qtxml-${MIN_QT_5_VERSION}:5
-	)
-
-	qt6? (
-		>=dev-qt/qtbase-${MIN_QT_6_VERSION}:6[concurrent,gui,network,widgets,xml(+)]
-		>=dev-qt/qt5compat-${MIN_QT_6_VERSION}:6
-		>=dev-qt/qtnetworkauth-${MIN_QT_6_VERSION}:6
-	)
-"
-
-# Required at both build-time and run-time
-COMMON_DEPENDS="
-	${QT_DEPS}
-
-	!qt6? ( >=dev-libs/quazip-1.3:=[qt5(+)] )
-	 qt6? ( >=dev-libs/quazip-1.3:=[qt6(-)] )
-
+# Required at both build time and runtime
+COMMON_DEPEND="
 	app-text/cmark:=
 	dev-cpp/tomlplusplus
+	>=dev-libs/quazip-1.3-r2:=[qt6(-)]
+	>=dev-qt/qtbase-${QTMIN}:6[concurrent,gui,network,widgets,xml(+)]
+	>=dev-qt/qt5compat-${QTMIN}:6
+	>=dev-qt/qtnetworkauth-${QTMIN}:6
 	sys-libs/zlib
-"
-
-BDEPEND="
-	app-text/scdoc
-	kde-frameworks/extra-cmake-modules:0
-	virtual/pkgconfig
 "
 
 # The gulrak-filesystem dependency is only needed at build time, because we don't actually use it on Linux,
 # only on legacy macOS. Still, we need it present at build time to appease CMake, and having it like this
 # makes it easier to maintain than patching the CMakeLists file directly.
 DEPEND="
-	${COMMON_DEPENDS}
+	${COMMON_DEPEND}
 	dev-cpp/gulrak-filesystem
 	media-libs/libglvnd
 	>=virtual/jdk-1.8.0:*
@@ -99,13 +71,15 @@ DEPEND="
 # At run-time we don't depend on JDK, only JRE
 # And we need more than just the GL headers
 RDEPEND="
-	${COMMON_DEPENDS}
-
-	!qt6? ( >=dev-qt/qtsvg-${MIN_QT_5_VERSION}:5 )
-	 qt6? ( >=dev-qt/qtsvg-${MIN_QT_6_VERSION}:6 )
-
+	${COMMON_DEPEND}
+	>=dev-qt/qtsvg-${QTMIN}:6
 	>=virtual/jre-1.8.0:*
 	virtual/opengl
+"
+BDEPEND="
+	app-text/scdoc
+	>=kde-frameworks/extra-cmake-modules-${QTMIN}:*
+	virtual/pkgconfig
 "
 
 src_prepare() {
@@ -132,7 +106,7 @@ src_configure() {
 		# Resulting binary is named fjordlauncher
 		-DLauncher_APP_BINARY_NAME="${PN}"
 		-DLauncher_BUILD_PLATFORM="Gentoo"
-		-DLauncher_QT_VERSION_MAJOR=$(usex qt6 6 5)
+		-DLauncher_QT_VERSION_MAJOR=6
 
 		-DENABLE_LTO=$(tc-is-lto)
 		-DBUILD_TESTING=$(usex test)
